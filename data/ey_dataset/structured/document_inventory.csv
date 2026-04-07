@@ -1,0 +1,17 @@
+candidate_id,doc_type,document_id,document_date,valid_to,present_in_folder,remarks
+CAND-101,Passport,ID-101-P,2024-08-11,2030-08-10,Yes,Current and legible
+CAND-101,Bank Statement,ADDR-101-BS,2026-01-28,,Yes,Within 90 days
+CAND-101,Basic Disclosure,CRIM-101,2026-02-10,,Yes,Clear
+CAND-102,Driving Licence,ID-102-DL,2024-02-01,2029-01-31,Yes,Current
+CAND-102,Utility Bill,ADDR-102-UB,2025-10-01,,Yes,Older than 90 days at review
+CAND-102,eVisa Share Code,RTW-102-SC,2026-02-03,,Yes,Valid at check
+CAND-103,Passport,ID-103-P,2015-11-02,2025-11-01,Yes,Expired but supports identity corroboration
+CAND-103,Student ID,ID-103-SID,2025-09-01,2026-09-01,Yes,Current photo ID
+CAND-103,Address Proof,ADDR-103,2026-02-20,,Yes,Within 90 days
+CAND-104,Passport,ID-104-P,2019-04-10,2029-04-09,Yes,Current
+CAND-104,Address Proof,ADDR-104-CT,,,No,"Mentioned in note, not retained"
+CAND-104,Basic Disclosure,CRIM-104,2026-02-18,,Yes,Clear
+CAND-105,Passport Copy,ID-105-P,2022-06-05,2032-06-04,Yes,Current
+CAND-105,BRP,RTW-105-BRP,2022-01-01,2024-12-31,Yes,Expired
+CAND-106,Passport,ID-106-P,2021-01-15,2031-01-14,Yes,Current
+CAND-106,Bank Statement,ADDR-106-BS,2026-01-15,,Yes,Within 90 days

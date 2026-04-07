@@ -1,0 +1,11 @@
+candidate_id,period_start,period_end,evidence_type,evidence_status,notes
+CAND-101,2023-01-01,2024-06-30,Referee,Valid,Employer A
+CAND-101,2024-07-01,2026-01-31,Referee,Valid,Employer B
+CAND-102,2023-01-01,2024-03-31,Referee,Valid,Employer X
+CAND-102,2024-04-01,2024-05-20,Gap,Unexplained,No evidence
+CAND-102,2024-05-21,2026-01-31,Payslips,Valid,Employer Y
+CAND-103,2023-01-01,2026-02-01,Education Declaration,Accepted,Full-time study and part-time work
+CAND-104,2023-01-01,2024-07-31,CV only,Weak,No documentary corroboration
+CAND-104,2024-08-01,2026-01-31,Referee,Valid,Employer Recent
+CAND-105,2024-06-01,2026-02-20,Referee,Valid,Only recent period covered
+CAND-106,2023-01-01,2026-01-15,Contract pack,Valid,Contracting history summary

@@ -1,0 +1,7 @@
+candidate_id,candidate_name,role_code,analyst_review_date,status_tracker,ready_to_join,identity_complete,rtw_complete,employment_complete,criminality_complete,risk_level,notes
+CAND-101,Aarav Mehta,ANALYST,2026-02-11,Clear,Yes,Yes,Yes,Yes,Yes,Low,All checks complete
+CAND-102,Sofia Khan,ANALYST,2026-02-04,Ready to Join,Yes,Yes,Yes,No,No,High,Urgent business joiner
+CAND-103,Nina Patel,INTERN,2026-02-25,Clear,Yes,Yes,Yes,Yes,N/A,Low,Intern role
+CAND-104,Liam O'Connor,OPS,2026-02-20,Clear,Yes,Yes,Yes,Yes,Yes,Medium,Manager verbally confirmed history
+CAND-105,Emma Roy,ANALYST,2026-03-03,Pending,No,No,No,No,No,High,Awaiting docs
+CAND-106,Rohan Sen,CONTRACTOR-LTD,2026-01-31,Risk Accepted,Yes,Yes,No,Yes,N/A,Medium,Contractor review

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocuRAG</title>
+    <meta name="description" content="Compliance-focused agent over PDF policies and CSV records.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f5f1e8;
+            --surface: rgba(255, 255, 255, 0.88);
+            --surface-strong: #ffffff;
+            --line: #d8cfbf;
+            --text: #211d18;
+            --muted: #6b6257;
+            --accent: #0f5f4d;
+            --accent-soft: #d6ebe5;
+            --danger: #9c2f2f;
+            --danger-soft: #f7dfdf;
+            --warn: #8f6400;
+            --warn-soft: #f4ead0;
+            --shadow: 0 18px 40px rgba(33, 29, 24, 0.08);
+            --radius: 18px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: "IBM Plex Sans", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top right, rgba(15, 95, 77, 0.1), transparent 28%),
+                radial-gradient(circle at left center, rgba(143, 100, 0, 0.08), transparent 22%),
+                var(--bg);
+            min-height: 100vh;
+        }
+
+        .shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 48px 20px 80px;
+        }
+
+        .hero {
+            margin-bottom: 28px;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 14px 0 10px;
+            font-size: clamp(2rem, 3vw, 3.4rem);
+            line-height: 1.02;
+        }
+
+        .hero p {
+            max-width: 700px;
+            color: var(--muted);
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .panel,
+        .result-card {
+            background: var(--surface);
+            border: 1px solid rgba(216, 207, 191, 0.9);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+        }
+
+        .panel {
+            padding: 20px;
+            margin-bottom: 22px;
+        }
+
+        .composer {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 14px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 108px;
+            resize: vertical;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 14px 16px;
+            font: inherit;
+            line-height: 1.5;
+            color: var(--text);
+            background: var(--surface-strong);
+        }
+
+        textarea:focus {
+            outline: 2px solid rgba(15, 95, 77, 0.18);
+            border-color: var(--accent);
+        }
+
+        button {
+            border: 0;
+            border-radius: 14px;
+            background: var(--accent);
+            color: white;
+            padding: 0 20px;
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            min-width: 130px;
+        }
+
+        button:disabled {
+            cursor: wait;
+            opacity: 0.7;
+        }
+
+        .quick-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .quick-questions button {
+            min-width: 0;
+            padding: 10px 14px;
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--line);
+        }
+
+        .feedback {
+            margin-top: 16px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            display: none;
+        }
+
+        .feedback.active { display: block; }
+        .feedback.error {
+            background: var(--danger-soft);
+            color: var(--danger);
+            border: 1px solid rgba(156, 47, 47, 0.18);
+        }
+        .feedback.info {
+            background: var(--accent-soft);
+            color: var(--accent);
+            border: 1px solid rgba(15, 95, 77, 0.16);
+        }
+
+        .results {
+            display: none;
+            gap: 16px;
+        }
+
+        .results.active {
+            display: grid;
+        }
+
+        .result-card {
+            padding: 20px;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .result-header h2,
+        .result-header h3 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 999px;
+            padding: 7px 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge.ok {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .badge.issue {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+
+        .mono {
+            font-family: "IBM Plex Mono", monospace;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.94rem;
+        }
+
+        th, td {
+            text-align: left;
+            vertical-align: top;
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        th {
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .muted { color: var(--muted); }
+
+        @media (max-width: 760px) {
+            .composer {
+                grid-template-columns: 1fr;
+            }
+
+            button {
+                min-height: 48px;
+            }
+
+            table, thead, tbody, tr, td, th {
+                display: block;
+            }
+
+            thead {
+                display: none;
+            }
+
+            td {
+                padding: 8px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="shell">
+        <section class="hero">
+            <span class="eyebrow">Agentic Compliance Review</span>
+            <h1>DocuRAG</h1>
+            <p>Ask about policy rules, candidate adjudication, audit findings, or expense compliance. The app will cross-check PDF policies against CSV records and explain the conclusion with sources.</p>
+        </section>
+
+        <section class="panel">
+            <div class="composer">
+                <textarea id="queryInput" placeholder="Example: Which hiring records look non-compliant, and which ones are valid adjudicated exceptions?"></textarea>
+                <button id="submitBtn" type="button">Analyze</button>
+            </div>
+            <div class="quick-questions">
+                <button type="button" data-query="What are the biggest compliance issues across the dataset?">Compliance sweep</button>
+                <button type="button" data-query="Which hiring records are violations versus adjudicated exceptions?">Hiring review</button>
+                <button type="button" data-query="Which expense records likely violate policy?">Expense review</button>
+                <button type="button" data-query="What required information is missing from the records?">Missing data</button>
+            </div>
+            <div id="statusMessage" class="feedback info"></div>
+            <div id="errorMessage" class="feedback error"></div>
+        </section>
+
+        <section id="results" class="results">
+            <article class="result-card">
+                <div class="result-header">
+                    <h2>Answer</h2>
+                    <span id="violationBadge" class="badge ok">No violations</span>
+                </div>
+                <div id="answerText"></div>
+            </article>
+
+            <article class="result-card">
+                <div class="result-header">
+                    <h3>Reasoning</h3>
+                </div>
+                <div id="reasoningText" class="muted"></div>
+            </article>
+
+            <article class="result-card">
+                <div class="result-header">
+                    <h3>Missing data</h3>
+                </div>
+                <div id="missingText" class="muted"></div>
+            </article>
+
+            <article class="result-card">
+                <div class="result-header">
+                    <h3>Sources</h3>
+                </div>
+                <div id="sourcesTable"></div>
+            </article>
+        </section>
+    </main>
+
+    <script>
+        const submitBtn = document.getElementById("submitBtn");
+        const queryInput = document.getElementById("queryInput");
+        const results = document.getElementById("results");
+        const statusMessage = document.getElementById("statusMessage");
+        const errorMessage = document.getElementById("errorMessage");
+
+        submitBtn.addEventListener("click", submitQuery);
+        queryInput.addEventListener("keydown", (event) => {
+            if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+                submitQuery();
+            }
+        });
+
+        document.querySelectorAll("[data-query]").forEach((button) => {
+            button.addEventListener("click", () => {
+                queryInput.value = button.dataset.query;
+                submitQuery();
+            });
+        });
+
+        function setStatus(message) {
+            statusMessage.textContent = message;
+            statusMessage.classList.toggle("active", Boolean(message));
+        }
+
+        function setError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.toggle("active", Boolean(message));
+        }
+
+        async function submitQuery() {
+            const question = queryInput.value.trim();
+            if (!question) {
+                setError("Enter a question first.");
+                results.classList.remove("active");
+                return;
+            }
+
+            setError("");
+            setStatus("Running retrieval and synthesis...");
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch("/query", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question }),
+                });
+
+                const data = await response.json();
+                renderResults(data);
+
+                if (!response.ok) {
+                    setError(data.answer || "The request failed.");
+                } else {
+                    setStatus("");
+                }
+            } catch (error) {
+                setError(`Request failed: ${error.message}`);
+                results.classList.remove("active");
+                setStatus("");
+            } finally {
+                submitBtn.disabled = false;
+            }
+        }
+
+        function renderResults(data) {
+            results.classList.add("active");
+
+            document.getElementById("answerText").textContent = data.answer || "No answer returned.";
+            document.getElementById("reasoningText").textContent = data.reasoning || "No reasoning returned.";
+            document.getElementById("missingText").textContent = data.missing_data || "None detected";
+
+            const badge = document.getElementById("violationBadge");
+            if (data.violations_detected) {
+                badge.className = "badge issue";
+                badge.textContent = "Violations detected";
+            } else {
+                badge.className = "badge ok";
+                badge.textContent = "No confirmed violations";
+            }
+
+            renderSources(data.sources || []);
+        }
+
+        function renderSources(sources) {
+            const sourcesTable = document.getElementById("sourcesTable");
+            if (!sources.length) {
+                sourcesTable.innerHTML = '<p class="muted">No sources returned.</p>';
+                return;
+            }
+
+            sourcesTable.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>File</th>
+                            <th>Type</th>
+                            <th>Reference</th>
+                            <th>Snippet</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${sources.map((source) => `
+                            <tr>
+                                <td class="mono">${escapeHtml(source.file || "")}</td>
+                                <td>${escapeHtml(source.type || "")}</td>
+                                <td>${escapeHtml(source.reference || "")}</td>
+                                <td>${escapeHtml(source.snippet || "")}</td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function escapeHtml(value) {
+            const div = document.createElement("div");
+            div.textContent = value;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
