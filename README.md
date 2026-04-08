@@ -146,6 +146,8 @@ The system supports multiple LLM providers.
 - Gemini remains available as a secondary provider.
 - If both providers are unavailable or fail, the system falls back to deterministic synthesis instead of crashing.
 
+Note: The system is designed to run locally due to FAISS-based indexing and multi-document processing requirements. Deployment on serverless platforms may not support persistent vector storage.
+
 Current default Groq model:
 
 - `llama-3.1-8b-instant`
